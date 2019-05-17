@@ -1,0 +1,16 @@
+image: sjstreeting/pipelines-hugo
+
+pipelines:
+  # Master branch deployment to live - no drafts
+  branches:
+    master:
+      - step:
+          script:
+            - hugo
+            - rsync -clvrz public/ $DEPLOY_URL
+  # All other branches include drafts and deploy to test URL only
+  default:
+    - step:
+        script:
+          - hugo -D -F -b "$TEST_BASEURL"
+          - rsync -clvrz -e public/ $TEST_DEPLOY_URL
